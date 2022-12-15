@@ -16,8 +16,22 @@ mongoose
     return Recipe.deleteMany()
   })
   .then(() => {
-    // Run your code here, after you have insured that the connection was made
+    mongoose.connection.close(() => {
+        console.log('Mongoose default connection disconnected through app termination');
+        process.exit(0);
+      });
   })
+      // Run your code here, after you have insured that the connection was made
+  .then(() => Recipe.create({title: "Tiramisu", level: "Easy Peasy", ingredients: ["eggs", "sugar", "mascarpone", "cocoa powder", "Disaronno", "coffee"], cuisine: "Italian", dishType: "dessert", image: "https://www.pexels.com/photo/close-up-shot-of-a-sliced-cake-6880219/", duration: 60, creator: "Giulia"})
+  )
+  .then(giuliaRecipe => console.log("title of recipe", giuliaRecipe.title))
+  .then(() => Recipe.insertMany(data))
+  // .then(() => console.log(data))
+  .then(recipeArray => recipeArray.forEach(recipe => console.log("title of recipe: ", recipe.title)))
+  .then(() => Recipe.findOneAndUpdate({title: "Rigatoni alla Genovese"}, {duration: 100}))
+  .then(()=> console.log("recipe duration updated successfully. New duration: ", ))
+  .then(() => Recipe.deleteOne({title: "Carrot Cake"}))
+  .then(() => console.log(`"The recipe has been deleted`))
   .catch(error => {
     console.error('Error connecting to the database', error);
   });
